@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# takes string with spaces, &s, uppercase and converts to slug--lowercase, replace spaces and slashes with dashes and ampersands with and
+# then copies to OSX clipboard
+
+# establish number of arguments; will check later that they were supplied
+EXPECTED_ARGS=1
+
+# check that argument was passed
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo "Usage: $0 basename"
+  exit
+fi
+
+echo $1 | tr A-Z a-z | sed 's/&/-and-/g' | sed 's/\//-/g' | tr [:blank:] - | pbcopy
+echo $1 | tr A-Z a-z | sed 's/&/-and-/g' | sed 's/\//-/g' | tr [:blank:] -
+echo "copied to clipboard"
