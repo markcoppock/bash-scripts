@@ -15,3 +15,14 @@ Copy this file to /usr/local/bin/
 	this-phrase-badly-needs-slugging-and-more
 	copied to clipboard
 
+---
+
+## 2. nuvvv
+
+Very simple script to create a new WordPress site in a [Varying Vagrant Vagrants](https://github.com/Varying-Vagrant-Vagrants/VVV) Vagrant install.  
+
+Set for if your VVV install is at ~/vvv/vagrant-local; modify the script if not.
+
+### usage 
+
+Once you've copied it to /usr/local/bin, create a new site with the command: `nuvvv sitename`  

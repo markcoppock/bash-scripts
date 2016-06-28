@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# establish number of arguments; will check later that they were supplied
+EXPECTED_ARGS=1
+
+# NGINX CONFIG
+cd ~/vvv/vagrant-local
+cd config/nginx-config/sites
+echo "configuring nginx for new site $1"
+touch local.$1.dev.conf
+echo "server {" > local.$1.dev.conf
+echo "  # Determines the port number that nginx will listen to for this" >> local.$1.dev.conf
+echo "  # server configuration. 80 is the default http port." >> local.$1.dev.conf
+echo "  listen       80;" >> local.$1.dev.conf
+echo " " >> local.$1.dev.conf
+echo "  # Listen for HTTPS requests as well" >> local.$1.dev.conf
+echo "  listen       443 ssl;" >> local.$1.dev.conf
+echo " " >> local.$1.dev.conf
+echo "  # Tells nginx what domain name should trigger this configuration" >> local.$1.dev.conf
+echo "  server_name  local.$1.dev;" >> local.$1.dev.conf
+echo " " >> local.$1.dev.conf
+echo "  # Tells nginx which directory the files for this domain are located" >> local.$1.dev.conf
+echo "  root         /srv/www/$1;" >> local.$1.dev.conf
+echo " " >> local.$1.dev.conf
+echo "  # Includes a basic WordPress configuration" >> local.$1.dev.conf
+echo " "
+echo "  include /etc/nginx/nginx-wp-common.conf;" >> local.$1.dev.conf
+echo "}" >> local.$1.dev.conf
+echo "nginx configured"
+
+
+# EDIT HOSTS FILE 
+echo "adding new site $1 to hosts file"
+sudo bash -c "echo '192.168.50.4 local.$1.dev' >> /etc/hosts"
+
+
+# DATABASE CONFIG 
+echo "configuring database..."
+cd ~/vvv/vagrant-local/database
+echo " " >> init-custom.sql
+echo "CREATE DATABASE IF NOT EXISTS \`$1_db\`;" >> init-custom.sql
+echo "GRANT ALL PRIVILEGES ON \`$1_db\`.* TO 'wp'@'localhost' IDENTIFIED BY 'wp';" >> init-custom.sql
+
+
+# WORDPRESS SETUP
+echo "setting up WordPress by cloning the default install"
+cd ~/vvv/vagrant-local/www/
+cp -r wordpress-default $1
+
+
+# to be added when checked
+# vagrant ssh
+# cd /srv/www/$1/
+# wp core download
+# wp core config --dbname=$1_db --dbuser=wp --dbpass=wp
+# wp core install --url=local.$1.dev --title=$1 --admin_user=admin --admin_password=password --admin_email=admin@$1.org
+
+# install Genesis theme
+# echo "installing the genesis theme"
+# cd ~/vvv/vagrant-local/www/$1/wp-content/themes/
+# wget --no-check-certificate https://dl.dropboxusercontent.com/u/**********YOUR URL HERE*************
+# rm genesis-latest.zip
+
+# remove Hello Dolly and Akismet
+cd ../plugins/
+rm hello.php
+rm -rf akismet
+
+# build wp-config.php
+echo "building the new wp-config file"
+cd ~/vvv/vagrant-local/www/$1/
+echo "<?php" > wp-config.php
+echo "define('DB_NAME', '$1_db');" >> wp-config.php
+echo "define('DB_USER', 'wp');" >> wp-config.php
+echo "define('DB_PASSWORD', 'wp');" >> wp-config.php 
+echo "define('DB_HOST', 'localhost');" >> wp-config.php
+echo "define('DB_CHARSET', 'utf8');" >> wp-config.php
+echo "define('DB_COLLATE', '');" >> wp-config.php
+curl https://api.wordpress.org/secret-key/1.1/salt/ >> wp-config.php
+echo "\$table_prefix  = 'wp_';" >> wp-config.php
+echo "define('WPLANG', '');" >> wp-config.php
+echo "define('WP_DEBUG', true);" >> wp-config.php
+echo "if ( !defined('ABSPATH') )" >> wp-config.php
+echo "    define('ABSPATH', dirname(__FILE__) . '/');" >> wp-config.php
+echo "require_once(ABSPATH . 'wp-settings.php');" >> wp-config.php
+
+# remove wp-config-sample.php
+echo "removing wp-sample-config.php"
+rm wp-config-sample.php
+
+# must provision now
+echo "starting the vagrant provision"
+cd ~/vvv/vagrant-local
+vagrant provision
+
+
+# check that argument was passed
+if [ $# -ne $EXPECTED_ARGS ]
+then
+   echo "Usage: $0 basename"
+   exit
+fi
