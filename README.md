@@ -15,6 +15,18 @@ Copy this file to /usr/local/bin/
 	this-phrase-badly-needs-slugging-and-more
 	copied to clipboard
 
+**NOTE:**  you'll need to escape quotes and exclamation points:  
+
+`slugme "Say \"Hello\""`
+
+	say-hello
+	copied to clipboard
+	
+`slugme "Hello\! How are you?"`
+
+	hello-how-are-you
+	copied to clipboard
+
 ---
 
 ## 2. nuvvv
