@@ -38,3 +38,20 @@ Set for if your VVV install is at ~/vvv/vagrant-local; modify the script if not.
 ### usage 
 
 Once you've copied it to /usr/local/bin, create a new site with the command: `nuvvv sitename`  
+
+---
+
+## 3. updatewpe
+
+Opens a secure shell prompt to the WP Engine install and uses WP-CLI to run the following:  
+
+`wp core update`  
+`wp plugin update --all`  
+`wp theme update --all`  
+
+Then it exits.  
+
+### usage
+
+`updatewpe installname`  
+
