@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -eq 1 ]; then
+  echo "Switching to WPEngine"
+  echo "running ssh -t $1@$1.ssh.wpengine.net wish us luck"
+  ssh -t $1@$1.ssh.wpengine.net "cd sites/$1; wp core update; wp plugin update --all; wp theme update --all; exit"
+  
+fi
