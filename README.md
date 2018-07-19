@@ -10,9 +10,9 @@ Echoes the output and also copies it to the OS-X clipboard. So far doesn't accom
 
 Copy this file to /usr/local/bin/  
 
-`slugme "This phrase BADLY needs slugging&more"`  
+`slugme "This phrase BADLY needs slugging&more -  I think?"`  
 
-	this-phrase-badly-needs-slugging-and-more
+	this-phrase-badly-needs-slugging-and-more-i-think
 	copied to clipboard
 
 **NOTE:**  you'll need to escape quotes and exclamation points:  
